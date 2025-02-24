@@ -1,2 +1,2 @@
 # famidi
-Midi cart for Family Computer and NES
+Midi cartrige for Family Computer and NES
