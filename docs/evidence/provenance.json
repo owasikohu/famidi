@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-13",
+  "pico_sdk_commit": "a1438dff1d38bd9c65dbd693f0e5db4b9ae91779",
+  "pico_board": "pico2",
+  "pico_platform": "rp2350-arm-s",
+  "clock_hz": 150000000,
+  "target_flags": [
+    "-mcpu=cortex-m33",
+    "-mthumb",
+    "-march=armv8-m.main+fp+dsp",
+    "-mfloat-abi=softfp",
+    "-mcmse",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "source_sha256": {
+    "CMakeLists.txt": "02030d2df612586b706d09373279bfafadc6006385c07f029a49c695e12c2311",
+    "src/main.c": "3a995d628d957d62b5e30561917f240e00ee76888b99f85cdb5e24dc3667aa94",
+    "src/poll_arm.S": "07b072de1c8372cdf1363a453b0555a879598871fd7a70a0ce290702832ad28b",
+    "rom/pulse.s": "154ab6ee606d0dd29c0f4c379bf9dc8ac41d347aa418800a63ba53418735a240",
+    "tools/gen_rom.py": "989e644fcc9c6d51f2c6f86228682ef46e6c4030521e9dcff1147def85f2ac06",
+    "tools/analyze_timing.py": "0f99ab252e5a62595129e489831be2def8e5d142fd34bf2f3344ace00947989f"
+  },
+  "reference_downloads": [
+    {
+      "url": "https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf",
+      "sha256": "a638d6780da919162660691bfa02c6dcf7c2a0b6e9f18e2d7519c80b664a2e39"
+    },
+    {
+      "url": "https://datasheets.raspberrypi.com/pico/pico-2-datasheet.pdf",
+      "sha256": "cbcfaf881018c686495a2e53c7bd281e7e0a8217d79447d73eda7c8f74b7f675"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf",
+      "sha256": "a2493b65471e5c873e3f71afbe152ac4d0f9233045c5ec289bda602a4b453cf0"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g332.pdf",
+      "sha256": "5ecad3180cb93664b358a9cb6a724e012fc9b124e6ae0d1004c9ae6600549f21"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g00.pdf",
+      "sha256": "1264f79853e6119b66d60fe54f1f6e87995c12c00138bd820981fe68febb1063"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc244a.pdf",
+      "sha256": "cfc6af57afa803bda8d900f5ba71bbaded5f50be369639be2002eb2370684179"
+    },
+    {
+      "url": "https://www.nesdev.org/wiki/CPU_pin_out_and_signal_description",
+      "sha256": "9844a52016d32da788fca9b7eda6855a18055f142df14c2e96d4dbc6a59677e9"
+    },
+    {
+      "url": "https://www.nesdev.org/wiki/Cartridge_connector",
+      "sha256": "5e4e8299580274ecb3349feed79cd7adeb306e819129cf48b93f25e3ec1950fe"
+    }
+  ],
+  "verification": {
+    "python_tests_passed": 5,
+    "c_bus_samples_checked": 1281,
+    "asm_bus_samples_checked": 1281,
+    "hardware_measured": false
+  }
+}

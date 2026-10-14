@@ -1,0 +1,24 @@
+
+famidi.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+Disassembly of section .scratch_x:
+
+20080000 <rom_poll_arm>:
+20080000:	f04f 4150 	mov.w	r1, #3489660928	@ 0xd0000000
+20080004:	f44f 3240 	mov.w	r2, #196608	@ 0x30000
+20080008:	f44f 437f 	mov.w	r3, #65280	@ 0xff00
+2008000c:	684c      	ldr	r4, [r1, #4]
+2008000e:	4214      	tst	r4, r2
+20080010:	d106      	bne.n	20080020 <rom_poll_arm+0x20>
+20080012:	b2e4      	uxtb	r4, r4
+20080014:	5d04      	ldrb	r4, [r0, r4]
+20080016:	0224      	lsls	r4, r4, #8
+20080018:	610c      	str	r4, [r1, #16]
+2008001a:	638b      	str	r3, [r1, #56]	@ 0x38
+2008001c:	e7f6      	b.n	2008000c <rom_poll_arm+0xc>
+2008001e:	bf00      	nop
+20080020:	640b      	str	r3, [r1, #64]	@ 0x40
+20080022:	e7f3      	b.n	2008000c <rom_poll_arm+0xc>

@@ -1,0 +1,34 @@
+{
+  "basis": "Existing compiled ASM timing.json; no firmware or instruction changes",
+  "asm_release_cycles": 19,
+  "asm_release_ns": 126.66666666666667,
+  "asm_idle_return_ns": 133.33333333333334,
+  "ntsc": {
+    "2A03E/G/H": {
+      "cpu_period_ns": 558.7301776501224,
+      "m2_high_ns": 349.2063610313265,
+      "m2_low_ns": 209.5238166187959,
+      "remaining_decode_and_pad_release_budget_ns": 82.85714995212923,
+      "remaining_idle_return_budget_ns": 76.19048328546256
+    },
+    "2A03_no_suffix": {
+      "cpu_period_ns": 558.7301776501224,
+      "m2_high_ns": 395.7672091688367,
+      "m2_low_ns": 162.96296848128569,
+      "remaining_decode_and_pad_release_budget_ns": 36.296301814619014,
+      "remaining_idle_return_budget_ns": 29.629635147952342
+    }
+  },
+  "buffer": {
+    "part": "TI SN74LVC8T245DW",
+    "datasheet": "SCES584D tables 5.3/5.9/6",
+    "conditions": "VCCA=3.3+-0.3V; VCCB=5+-0.5V; -40..85C; B load 15pF, 2kohm; pad/board/receiver settling excluded",
+    "t_pd_min_ns": 0.5,
+    "t_pd_max_ns": 4.4,
+    "t_en_max_ns": 6.8,
+    "t_dis_max_ns": 6.3,
+    "read_best_ns": 73.83333333333333,
+    "read_conservative_worst_ns": 151.06666666666666,
+    "read_if_idle_return_verified_worst_ns": 131.06666666666666
+  }
+}

@@ -1,0 +1,557 @@
+{
+  "model": "RP2350 datasheet release 8, 3.7.4.9; one core, no DMA/IRQs/contention, split SRAM banks, 150MHz",
+  "compiler": "arm-none-eabi-gcc (15:14.2.rel1-1) 14.2.1 20241119",
+  "c": {
+    "read_from_active": {
+      "instructions": 8,
+      "cycles": 11,
+      "detail": [
+        {
+          "instruction": "20080008:\t6853      \tldr\tr3, [r2, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000a:\tf413 3f40 \ttst.w\tr3, #196608\t@ 0x30000",
+          "load_use_stall": 1,
+          "cycles": 2,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\tb2d9      \tuxtb\tr1, r3",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td005      \tbeq.n\t2008001e <rom_poll_c+0x1e>",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        },
+        {
+          "instruction": "2008001e:\t5c43      \tldrb\tr3, [r0, r1]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080020:\t021b      \tlsls\tr3, r3, #8",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080022:\t6113      \tstr\tr3, [r2, #16]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080024:\t6394      \tstr\tr4, [r2, #56]\t@ 0x38",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "read_from_idle": {
+      "instructions": 8,
+      "cycles": 10,
+      "detail": [
+        {
+          "instruction": "20080014:\t6853      \tldr\tr3, [r2, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080016:\tf413 3f40 \ttst.w\tr3, #196608\t@ 0x30000",
+          "load_use_stall": 1,
+          "cycles": 2,
+          "branch": null
+        },
+        {
+          "instruction": "2008001a:\tb2d9      \tuxtb\tr1, r3",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008001c:\td1f9      \tbne.n\t20080012 <rom_poll_c+0x12>",
+          "load_use_stall": 0,
+          "cycles": 0,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        },
+        {
+          "instruction": "2008001e:\t5c43      \tldrb\tr3, [r0, r1]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080020:\t021b      \tlsls\tr3, r3, #8",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080022:\t6113      \tstr\tr3, [r2, #16]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080024:\t6394      \tstr\tr4, [r2, #56]\t@ 0x38",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "active_poll_period": {
+      "instructions": 9,
+      "cycles": 12,
+      "detail": [
+        {
+          "instruction": "20080008:\t6853      \tldr\tr3, [r2, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000a:\tf413 3f40 \ttst.w\tr3, #196608\t@ 0x30000",
+          "load_use_stall": 1,
+          "cycles": 2,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\tb2d9      \tuxtb\tr1, r3",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td005      \tbeq.n\t2008001e <rom_poll_c+0x1e>",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        },
+        {
+          "instruction": "2008001e:\t5c43      \tldrb\tr3, [r0, r1]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080020:\t021b      \tlsls\tr3, r3, #8",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080022:\t6113      \tstr\tr3, [r2, #16]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080024:\t6394      \tstr\tr4, [r2, #56]\t@ 0x38",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080026:\te7ef      \tb.n\t20080008 <rom_poll_c+0x8>",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        }
+      ]
+    },
+    "idle_poll_period": {
+      "instructions": 5,
+      "cycles": 7,
+      "detail": [
+        {
+          "instruction": "20080014:\t6853      \tldr\tr3, [r2, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080016:\tf413 3f40 \ttst.w\tr3, #196608\t@ 0x30000",
+          "load_use_stall": 1,
+          "cycles": 2,
+          "branch": null
+        },
+        {
+          "instruction": "2008001a:\tb2d9      \tuxtb\tr1, r3",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008001c:\td1f9      \tbne.n\t20080012 <rom_poll_c+0x12>",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        },
+        {
+          "instruction": "20080012:\t6414      \tstr\tr4, [r2, #64]\t@ 0x40",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "release_from_active": {
+      "instructions": 5,
+      "cycles": 6,
+      "detail": [
+        {
+          "instruction": "20080008:\t6853      \tldr\tr3, [r2, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000a:\tf413 3f40 \ttst.w\tr3, #196608\t@ 0x30000",
+          "load_use_stall": 1,
+          "cycles": 2,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\tb2d9      \tuxtb\tr1, r3",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td005      \tbeq.n\t2008001e <rom_poll_c+0x1e>",
+          "load_use_stall": 0,
+          "cycles": 0,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        },
+        {
+          "instruction": "20080012:\t6414      \tstr\tr4, [r2, #64]\t@ 0x40",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "rom_poll_c": {
+      "address": "0x20080000",
+      "bytes": 40
+    },
+    "rom256": {
+      "address": "0x20081000",
+      "bytes": 256
+    },
+    "theoretical_gpio_to_sio_oe": {
+      "best_cycles": 12,
+      "worst_cycles": 26,
+      "best_ns_at_150MHz": 80.0,
+      "worst_ns_at_150MHz": 173.33333333333334,
+      "note": "Includes 2..3 input-sync/phase cycles; excludes pad, translators, board and CPU setup time. No metastability extension or bus contention."
+    },
+    "theoretical_release_worst_cycles": 21,
+    "sha256_elf": "72c7706a0641e6952ae328ec51624fb1eebb4b62c4cc5b28da46afc0ad37fd8e",
+    "sha256_uf2": "23fd73ddc75a2e58c49c6c763e96deb73404d86c152c79d230d33780577c81fa"
+  },
+  "asm": {
+    "read_from_active": {
+      "instructions": 8,
+      "cycles": 9,
+      "detail": [
+        {
+          "instruction": "2008000c:\t684c      \tldr\tr4, [r1, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\t4214      \ttst\tr4, r2",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td106      \tbne.n\t20080020 <rom_poll_arm+0x20>",
+          "load_use_stall": 0,
+          "cycles": 0,
+          "branch": {
+            "F": 1,
+            "K": 0
+          }
+        },
+        {
+          "instruction": "20080012:\tb2e4      \tuxtb\tr4, r4",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080014:\t5d04      \tldrb\tr4, [r0, r4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080016:\t0224      \tlsls\tr4, r4, #8",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080018:\t610c      \tstr\tr4, [r1, #16]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008001a:\t638b      \tstr\tr3, [r1, #56]\t@ 0x38",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "read_from_idle": {
+      "instructions": 8,
+      "cycles": 9,
+      "detail": [
+        {
+          "instruction": "2008000c:\t684c      \tldr\tr4, [r1, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\t4214      \ttst\tr4, r2",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td106      \tbne.n\t20080020 <rom_poll_arm+0x20>",
+          "load_use_stall": 0,
+          "cycles": 0,
+          "branch": {
+            "F": 1,
+            "K": 0
+          }
+        },
+        {
+          "instruction": "20080012:\tb2e4      \tuxtb\tr4, r4",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080014:\t5d04      \tldrb\tr4, [r0, r4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080016:\t0224      \tlsls\tr4, r4, #8",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080018:\t610c      \tstr\tr4, [r1, #16]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008001a:\t638b      \tstr\tr3, [r1, #56]\t@ 0x38",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "active_poll_period": {
+      "instructions": 9,
+      "cycles": 10,
+      "detail": [
+        {
+          "instruction": "2008000c:\t684c      \tldr\tr4, [r1, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\t4214      \ttst\tr4, r2",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td106      \tbne.n\t20080020 <rom_poll_arm+0x20>",
+          "load_use_stall": 0,
+          "cycles": 0,
+          "branch": {
+            "F": 1,
+            "K": 0
+          }
+        },
+        {
+          "instruction": "20080012:\tb2e4      \tuxtb\tr4, r4",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080014:\t5d04      \tldrb\tr4, [r0, r4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080016:\t0224      \tlsls\tr4, r4, #8",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080018:\t610c      \tstr\tr4, [r1, #16]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008001a:\t638b      \tstr\tr3, [r1, #56]\t@ 0x38",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008001c:\te7f6      \tb.n\t2008000c <rom_poll_arm+0xc>",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        }
+      ]
+    },
+    "idle_poll_period": {
+      "instructions": 5,
+      "cycles": 7,
+      "detail": [
+        {
+          "instruction": "2008000c:\t684c      \tldr\tr4, [r1, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\t4214      \ttst\tr4, r2",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td106      \tbne.n\t20080020 <rom_poll_arm+0x20>",
+          "load_use_stall": 0,
+          "cycles": 2,
+          "branch": {
+            "F": 1,
+            "K": 0
+          }
+        },
+        {
+          "instruction": "20080020:\t640b      \tstr\tr3, [r1, #64]\t@ 0x40",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080022:\te7f3      \tb.n\t2008000c <rom_poll_arm+0xc>",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": {
+            "F": 1,
+            "K": 1
+          }
+        }
+      ]
+    },
+    "release_from_active": {
+      "instructions": 4,
+      "cycles": 6,
+      "detail": [
+        {
+          "instruction": "2008000c:\t684c      \tldr\tr4, [r1, #4]",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "2008000e:\t4214      \ttst\tr4, r2",
+          "load_use_stall": 1,
+          "cycles": 1,
+          "branch": null
+        },
+        {
+          "instruction": "20080010:\td106      \tbne.n\t20080020 <rom_poll_arm+0x20>",
+          "load_use_stall": 0,
+          "cycles": 2,
+          "branch": {
+            "F": 1,
+            "K": 0
+          }
+        },
+        {
+          "instruction": "20080020:\t640b      \tstr\tr3, [r1, #64]\t@ 0x40",
+          "load_use_stall": 0,
+          "cycles": 1,
+          "branch": null
+        }
+      ]
+    },
+    "rom_poll_arm": {
+      "address": "0x20080000",
+      "bytes": 36
+    },
+    "rom256": {
+      "address": "0x20081000",
+      "bytes": 256
+    },
+    "theoretical_gpio_to_sio_oe": {
+      "best_cycles": 11,
+      "worst_cycles": 22,
+      "best_ns_at_150MHz": 73.33333333333333,
+      "worst_ns_at_150MHz": 146.66666666666666,
+      "note": "Includes 2..3 input-sync/phase cycles; excludes pad, translators, board and CPU setup time. No metastability extension or bus contention."
+    },
+    "theoretical_release_worst_cycles": 19,
+    "sha256_elf": "f4275f8f7731f86cf91b7a4673b2ec94aa2311772aa3c6390b4918869c6a25ea",
+    "sha256_uf2": "2f7b5f930d97f28f09e0d1b58304f5f2e12d7512fd0511406e94378ac9122939"
+  }
+}
