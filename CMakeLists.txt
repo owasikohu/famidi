@@ -17,16 +17,24 @@ if(NOT PICO_PLATFORM STREQUAL "rp2350-arm-s")
 endif()
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+option(FAMIDI_USB_MIDI "USB MIDI on core 0, ROM on core 1, IRQ-free NES mailbox" OFF)
+set(ROM_SOURCE rom/pulse.s)
+if(FAMIDI_USB_MIDI)
+    set(ROM_SOURCE rom/midi.s)
+endif()
 set(ROM_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 add_custom_command(
     OUTPUT ${ROM_DIR}/rom256.h ${ROM_DIR}/rom256.bin ${ROM_DIR}/famidi.nes ${ROM_DIR}/rom.lst
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_rom.py
-            --source ${CMAKE_CURRENT_SOURCE_DIR}/rom/pulse.s --out ${ROM_DIR}
-    DEPENDS tools/gen_rom.py rom/pulse.s
+            --source ${CMAKE_CURRENT_SOURCE_DIR}/${ROM_SOURCE} --out ${ROM_DIR}
+    DEPENDS tools/gen_rom.py ${ROM_SOURCE}
     VERBATIM)
 add_custom_target(rom_image DEPENDS ${ROM_DIR}/rom256.h)
 
 option(FAMIDI_ASM "Use the compact Cortex-M33 polling loop" OFF)
+if(FAMIDI_USB_MIDI AND NOT FAMIDI_ASM)
+    message(FATAL_ERROR "USB MIDI requires -DFAMIDI_ASM=ON to retain the proven polling loop")
+endif()
 add_executable(famidi src/main.c ${ROM_DIR}/rom256.h)
 set_target_properties(famidi PROPERTIES LINKER_LANGUAGE C)
 add_dependencies(famidi rom_image)
@@ -41,6 +49,17 @@ target_compile_definitions(famidi PRIVATE
     PICO_STDIO_USB=0 PICO_STDIO_UART=0 PICO_TIME_DEFAULT_ALARM_POOL_DISABLED=1
     SYS_CLK_HZ=150000000)
 target_link_libraries(famidi pico_runtime hardware_clocks)
+if(FAMIDI_USB_MIDI)
+    if(NOT TARGET tinyusb_device)
+        message(FATAL_ERROR "Initialize pico-sdk submodule lib/tinyusb for USB MIDI")
+    endif()
+    target_sources(famidi PRIVATE src/midi_engine.c src/usb_midi.c src/usb_descriptors.c src/usb_enter.S)
+    set_source_files_properties(src/midi_engine.c src/usb_midi.c src/usb_descriptors.c
+        PROPERTIES COMPILE_OPTIONS "-Wall;-Wextra;-Werror")
+    target_include_directories(famidi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_compile_definitions(famidi PRIVATE FAMIDI_USB_MIDI=1)
+    target_link_libraries(famidi pico_multicore pico_unique_id tinyusb_device m)
+endif()
 pico_enable_stdio_usb(famidi 0)
 pico_enable_stdio_uart(famidi 0)
 pico_add_extra_outputs(famidi)

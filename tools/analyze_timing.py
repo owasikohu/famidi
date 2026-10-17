@@ -108,7 +108,7 @@ def timing(sequence, code):
     return {"instructions": len(sequence), "cycles": now, "detail": details}
 
 
-def audit(elf, symbol, args):
+def audit(elf, symbol, args, midi=False):
     dis = command(args.objdump, "-d", f"--disassemble={symbol}", str(elf))
     code = instructions(dis)
     samples = [pc for pc, inst in code.items() if is_sample(inst)]
@@ -133,6 +133,8 @@ def audit(elf, symbol, args):
         result[name] = {"address": hex(address), "bytes": size}
     for forbidden in ("gpio_init", "gpio_get", "gpio_put", "gpio_set_dir", "stdio_usb_init",
                       "multicore_launch_core1", "alarm_pool_irq_handler", "runtime_init_default_alarm_pool"):
+        if midi and forbidden == "multicore_launch_core1":
+            continue
         if re.search(rf"\b{forbidden}$", nm, re.M):
             raise ValueError(f"Unexpected linked functionality: {forbidden}")
     with tempfile.TemporaryDirectory() as tmp:
@@ -164,17 +166,26 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--c", type=Path, required=True)
     parser.add_argument("--asm", type=Path, required=True)
+    parser.add_argument("--midi", type=Path, help="Also audit the dual-core USB MIDI build")
     parser.add_argument("--out", type=Path, required=True)
     for tool in ("objdump", "nm", "objcopy", "gcc"):
         parser.add_argument(f"--{tool}", default=f"arm-none-eabi-{tool}")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     report = {"model": "RP2350 datasheet release 8, 3.7.4.9; one core, no DMA/IRQs/contention, split SRAM banks, 150MHz", "compiler": command(args.gcc, "--version").splitlines()[0]}
-    for name, elf, symbol in (("c", args.c, "rom_poll_c"), ("asm", args.asm, "rom_poll_arm")):
-        report[name], dis = audit(elf, symbol, args)
+    targets = [("c", args.c, "rom_poll_c"), ("asm", args.asm, "rom_poll_arm")]
+    if args.midi:
+        targets.append(("midi", args.midi, "rom_poll_arm"))
+    for name, elf, symbol in targets:
+        report[name], dis = audit(elf, symbol, args, midi=name == "midi")
+        if name == "midi":
+            report[name]["concurrency_note"] = (
+                "Unchanged polling instruction model only. Core 1 serves ROM; core 0 runs USB "
+                "and publishes a mailbox in bank 9 while NES waits. Multicore/SIO contention is not modeled; "
+                "the original one-core timing bounds are not a hardware guarantee for USB MIDI.")
         (args.out / f"{name}-loop.dis").write_text(dis)
     (args.out / "timing.json").write_text(json.dumps(report, indent=2) + "\n")
-    for name in ("c", "asm"):
+    for name, _, _ in targets:
         print(name, report[name]["theoretical_gpio_to_sio_oe"])
 
 

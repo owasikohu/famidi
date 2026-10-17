@@ -59,6 +59,7 @@ def check(elf, symbol, objcopy, nm):
                 assert state["out"] == expected
                 assert state["oe"] & DATA_MASK == DATA_MASK
             assert state["oe"] & INHIBIT_MASK
+            assert not state["oe"] & ~(DATA_MASK | INHIBIT_MASK), "Unexpected output GPIO"
         if index == len(samples):
             uc.emu_stop()
             return
@@ -90,11 +91,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--c", type=Path, required=True)
     parser.add_argument("--asm", type=Path, required=True)
+    parser.add_argument("--midi", type=Path)
     parser.add_argument("--objcopy", default="arm-none-eabi-objcopy")
     parser.add_argument("--nm", default="arm-none-eabi-nm")
     args = parser.parse_args()
     check(args.c, "rom_poll_c", args.objcopy, args.nm)
     check(args.asm, "rom_poll_arm", args.objcopy, args.nm)
+    if args.midi:
+        check(args.midi, "rom_poll_arm", args.objcopy, args.nm)
 
 
 if __name__ == "__main__":

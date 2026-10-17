@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171a17">
+  <meta name="description" content="MIDIキーボードをfamidiにつないで、ファミコン実機の4つの音源を演奏するWeb MIDIコンソール。">
+  <title>famidi — MIDI Console</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" type="module"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="famidi MIDI Console ホーム"><span class="brand-icon" aria-hidden="true">f</span><span>famidi<span class="brand-dot">.</span></span><span class="brand-caption">MIDI CONSOLE</span></a>
+      <div class="top-actions"><span class="browser-badge"><span class="tiny-led"></span>WEB MIDI</span><button class="panic-button" id="panic" type="button" disabled><span aria-hidden="true">■</span> すべての音を停止 <kbd>Esc</kbd></button></div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div><p class="eyebrow">YOUR KEYBOARD. REAL FAMICOM SOUND.</p><h1>ファミコンを、<br class="mobile-break">鍵盤で。</h1><p class="intro-copy">いつものMIDIキーボードから、実機の4つの音源へ。</p></div>
+        <div class="session-badge"><span class="session-led" id="session-led"></span><div><span id="session-status">接続待ち</span><small id="session-detail">USB MIDIを接続してください</small></div></div>
+      </section>
+
+      <div class="console-layout">
+        <div class="main-column">
+          <section class="panel routing-panel" aria-labelledby="routing-title">
+            <div class="panel-header"><h2 id="routing-title"><span class="section-number">01</span> 接続</h2><span class="micro-label">SIGNAL ROUTING</span></div>
+            <div class="route">
+              <label class="port-field"><span class="field-caption"><span class="port-icon" aria-hidden="true">↳</span> MIDI入力 <small>KEYBOARD</small></span><select id="input-port" aria-label="MIDI入力キーボード" disabled><option value="">接続すると選択できます</option></select><span id="input-detail" class="port-detail">MIDIキーボードのUSBをPCに接続</span></label>
+              <span class="route-arrow" aria-hidden="true">→</span>
+              <label class="port-field"><span class="field-caption"><span class="port-icon" aria-hidden="true">↗</span> MIDI出力 <small>FAMIDI</small></span><select id="output-port" aria-label="MIDI出力先" disabled><option value="">接続すると選択できます</option></select><span id="output-detail" class="port-detail">famidiのUSBをPCに接続</span></label>
+            </div>
+            <div class="routing-footer"><div class="route-format"><span class="tag" id="route-mode">MONO</span><span id="route-voices">Pulse 1</span></div><button class="connect-button" id="connect" type="button"><span id="connect-label">MIDIに接続</span><span aria-hidden="true">↗</span></button></div>
+            <p class="connection-help" id="connection-help" role="status" aria-live="polite">最初にブラウザのMIDIアクセスを許可してください。</p>
+          </section>
+
+          <section class="panel keyboard-panel" aria-labelledby="keyboard-title">
+            <div class="panel-header"><h2 id="keyboard-title"><span class="section-number">02</span> 演奏</h2><button class="text-button" id="test-tone" type="button" disabled><span aria-hidden="true">▷</span> A4を試す</button></div>
+            <div class="mode-toolbar">
+              <label class="small-field">演奏モード<select id="play-mode"><option value="original">Original互換 · ch1–4を維持</option><option value="mono" selected>Mono · 最後のノートを優先</option><option value="poly">3-voice Poly · P1 / P2 / Tri</option></select></label>
+              <label class="small-field">画面鍵盤 / コントロール先<select id="control-channel"><option value="poly" disabled>Polyの3音源をまとめて操作</option><option value="0">ch1 · Pulse 1</option><option value="1">ch2 · Pulse 2</option><option value="2">ch3 · Triangle</option><option value="3">ch4 · Noise</option><option value="all">全音源（鍵盤はPulse 1）</option></select></label>
+            </div><p id="mode-help" class="panel-note">Mono：入力を選択した音源へ。離鍵すると、保持中の前の音へ戻ります。</p>
+            <div class="keyboard-toolbar"><div class="octave-control"><span class="micro-label">OCTAVE</span><button id="octave-down" class="square-button" aria-label="表示鍵盤を1オクターブ下げる" type="button">−</button><output id="octave-label">C3 – B5</output><button id="octave-up" class="square-button" aria-label="表示鍵盤を1オクターブ上げる" type="button">＋</button></div><span class="keyboard-channel" id="key-priority">LAST NOTE PRIORITY</span></div>
+            <div class="keyboard-scroll"><div id="keyboard" class="piano" aria-label="画面のMIDI鍵盤"></div></div>
+            <div class="keyboard-hint"><span><kbd>A</kbd><kbd>W</kbd><kbd>S</kbd><span class="hint-dots">…</span> PCのキーでも演奏できます</span><span class="muted">C4から1オクターブ</span></div>
+            <div class="performance-options"><label class="small-field">入力チャンネル<select id="input-channel" aria-label="受信するMIDIチャンネル"><option value="all">すべて</option></select></label><div class="transpose-field"><span>トランスポーズ</span><div class="stepper"><button type="button" id="transpose-down" aria-label="半音下げる">−</button><output id="transpose-value">0</output><button type="button" id="transpose-up" aria-label="半音上げる">＋</button></div></div><label class="velocity-field"><span>画面の鍵盤 <small>VELOCITY</small><output id="velocity-value">100</output></span><input id="velocity" type="range" min="1" max="127" value="100" aria-label="画面の鍵盤のVelocity"></label></div>
+          </section>
+
+          <section class="panel mapping-panel" aria-labelledby="mapping-title">
+            <div class="panel-header"><h2 id="mapping-title"><span class="section-number">03</span> コントローラー割当</h2><span id="saved-state" class="micro-label" role="status">LOCAL SETTINGS</span></div>
+            <div class="mapping-body">
+              <div class="preset-bar"><label class="small-field">プリセット<select id="preset"><option value="standard">汎用 · 標準CC</option><option value="oxygen">Oxygen 25 · 開始用</option><option value="custom">カスタム</option></select></label><button class="square-button wide-button" id="apply-preset" type="button">適用</button></div>
+              <p class="panel-note inline-note">Oxygen：CC1→Duty、CC74→Sweep時間、CC71→Sweep量、CC91→Sweep ON、CC93→方向。世代や本体設定に合わせて下の割当を変更できます。</p>
+              <div class="table-scroll"><table class="mapping-table"><thead><tr><th>入力</th><th>CC番号</th><th>操作</th><th>送信先</th><th><span class="sr-only">削除</span></th></tr></thead><tbody id="cc-mappings"></tbody></table></div>
+              <button type="button" id="add-mapping" class="text-button add-row">＋ CC割当を追加</button>
+              <details open class="filter-settings"><summary>CCの飛び対策 <span>外れ値 → 平滑化 → ヒステリシス → 段階化</span></summary>
+                <div class="filter-grid"><label class="small-field">外れ値の差（0で無効）<input id="filter-outlier" type="number" min="0" max="127" value="48"></label><label class="small-field">平滑化（ms / 0で無効）<input id="filter-smoothing" type="number" min="0" max="300" value="35"></label><label class="small-field">ヒステリシス（0–16）<input id="filter-hysteresis" type="number" min="0" max="16" value="2"></label></div>
+                <p class="inline-note panel-note">Pulse音量は16段階、Dutyは4段階。大きなジャンプは120ms以内の近い2サンプルで確定します。Pitchホイール・Note On/Off・SweepのON/方向は遅延処理しません。</p>
+              </details>
+              <details class="pad-settings"><summary>Pads → Noise の割当</summary><div class="table-scroll"><table class="mapping-table"><thead><tr><th>入力ch</th><th>入力Note</th><th>Noise Note</th><th><span class="sr-only">削除</span></th></tr></thead><tbody id="pad-mappings"></tbody></table></div><button type="button" id="add-pad" class="text-button add-row">＋ Padを追加</button><p class="inline-note panel-note">Noise Note 0–63：Long / 64–127：Short。各16種類を繰り返します。空にするとPadも通常の鍵盤として扱います。</p></details>
+            </div>
+          </section>
+          <section class="panel activity-panel" aria-labelledby="activity-title"><div class="panel-header"><h2 id="activity-title"><span class="section-number">04</span> MIDI monitor</h2><button id="clear-log" class="text-button" type="button">クリア</button></div><div id="activity-log" class="activity-log" role="log" aria-label="最近のMIDI入力と出力"><p class="log-empty">鍵盤を押すと、送信したMIDIメッセージがここに表示されます。</p></div></section>
+        </div>
+
+        <aside class="side-column">
+          <section class="voice-panel" aria-labelledby="voice-title"><div class="voice-top"><span class="micro-label">NES APU</span><span class="voice-number">01</span></div><h2 id="voice-title"><span id="active-voice">Pulse 1</span><span class="voice-dot" id="voice-dot"></span></h2><p class="voice-subtitle" id="voice-subtitle">4 CHANNEL USB MIDI</p><div id="voice-list" class="voice-list" aria-label="音源ごとの送信状態"></div><svg class="waveform" viewBox="0 0 280 56" aria-hidden="true"><path class="wave-grid" d="M0 28H280M70 0V56M140 0V56M210 0V56"/><path class="wave-trace" d="M0 42H28V14H70V42H112V14H154V42H196V14H238V42H280"/></svg><div class="voice-note"><div><span class="micro-label">送信中のノート</span><strong id="current-note">—</strong></div><span id="current-frequency" class="frequency">STANDBY</span></div><div class="velocity-monitor"><div><span>VELOCITY</span><strong id="current-velocity">000</strong></div><div class="meter" aria-hidden="true"><span id="velocity-meter"></span></div></div><div class="voice-stats"><div><span>CHANNEL</span><strong id="voice-channel">01</strong></div><div><span>HELD KEYS</span><strong id="held-count">00</strong></div><div><span>ENGINE</span><strong id="voice-mode">MONO</strong></div></div><p class="voice-footnote">表示はMIDIの送信状態です。</p></section>
+
+          <section class="panel expression-panel" aria-labelledby="expression-title"><div class="panel-header"><h2 id="expression-title">音のコントロール</h2></div><label class="control-slider"><span>ボリューム <small>CC 7</small><output id="volume-value">127</output></span><input id="volume" type="range" min="0" max="120" step="8" value="120" aria-label="CC7 Volume" disabled><span class="range-labels"><span>0</span><span>127</span></span></label><label class="control-slider"><span>Expression <small>CC 11</small><output id="expression-value">127</output></span><input id="expression" type="range" min="0" max="127" value="127" aria-label="CC11 Expression"></label>
+            <label class="control-slider"><span>Duty <small>CC 70</small></span><select id="duty" aria-label="Duty"><option value="0">12.5%</option><option value="32">25%</option><option value="64" selected>50%</option><option value="96">75%</option></select></label>
+            <div class="sweep-controls"><label><input id="sweep-on" type="checkbox"> Sweep ON</label><label><input id="sweep-up" type="checkbox" checked> 音程上昇</label><label>時間 <input id="sweep-time" type="number" min="0" max="7" value="1" aria-label="Sweep時間"></label><label>変化量 <input id="sweep-shift" type="number" min="0" max="7" value="3" aria-label="Sweep変化量"></label></div>
+            <div class="control-slider bend-control"><label for="bend">ピッチベンド <small>±2 SEMITONES</small><output id="bend-value">0.00</output></label><input id="bend" type="range" min="-8192" max="8191" value="0" aria-label="Pitch Bend" disabled><div class="range-labels"><span>−2</span><button id="bend-center" class="center-button" type="button" disabled>中央に戻す</button><span>＋2</span></div></div><p class="panel-note">Triangleの音量はON/OFF。Duty・SweepはPulseのみ。設定はこのブラウザに保存します。</p></section>
+
+          <div class="setup-note"><span class="setup-icon" aria-hidden="true">i</span><p>NESはON、PicoはUSB接続。<br>Chrome / Edgeで開いて、<br>MIDIアクセスを許可してください。</p></div>
+        </aside>
+      </div>
+    </main>
+    <footer><span>famidi<span class="brand-dot">.</span> <span class="footer-caption">MADE FOR REAL HARDWARE</span></span><span>ブラウザ内で直接送信 <span class="footer-dot">·</span> 4 CHANNELS <span class="footer-dot">·</span> Web MIDI 1.0</span></footer>
+  </div>
+</body>
+</html>

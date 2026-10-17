@@ -6,6 +6,20 @@
 #include "hardware/structs/sio.h"
 #include "hardware/structs/syscfg.h"
 #include "rom256.h"
+#if defined(FAMIDI_USB_MIDI)
+#include <stdatomic.h>
+#include "pico/multicore.h"
+#include "midi_engine.h"
+#include "usb_midi.h"
+// The SDK's default core-0 MSP uses bank 9. Move USB to ordinary SRAM.
+static uint32_t __attribute__((aligned(8))) usb_stack[2048];
+static uint32_t __attribute__((aligned(8))) rom_stack[512];
+static atomic_bool rom_ready;
+_Static_assert((ROM_COMMANDS & 255u) == FAMIDI_COMMAND_START, "Command address mismatch");
+_Static_assert((ROM_COMMAND_SIZE & 255u) == FAMIDI_COMMAND_SIZE_ADDRESS, "Size address mismatch");
+_Static_assert((ROM_READY & 255u) == FAMIDI_READY_ADDRESS, "Ready address mismatch");
+_Static_assert((ROM_RELEASE & 255u) == FAMIDI_RELEASE_ADDRESS, "Release address mismatch");
+#endif
 
 enum {
     ADDRESS_MASK = 0xffu,       // GP0..7
@@ -39,20 +53,39 @@ rom_poll_c(const uint8_t *rom) {
 }
 #endif
 
+#if defined(FAMIDI_USB_MIDI)
+void __attribute__((noreturn)) famidi_rom_core1(void) {
+    __asm volatile("cpsid i" ::: "memory");
+    *(volatile uint32_t *)0xe000e010u = 0;
+    atomic_store_explicit(&rom_ready, true, memory_order_release);
+    rom_poll_arm(rom256);
+}
+
+// Never return to main's old stack. The external assembly entry also makes
+// the MSP switch and unconditional branch inspectable in the linked firmware.
+extern void __attribute__((noreturn)) famidi_usb_enter(uint32_t *stack_top);
+#endif
+
 int main(void) {
-    // No stdio, USB initialization, IRQ handler, PIO or core-1 launch.
-    // The USB connector supplies power only after booting from flash.
     set_sys_clock_khz(150000, true);
     __asm volatile("cpsid i" ::: "memory");
     // Disable SysTick as well; boot normally leaves it stopped.
     *(volatile uint32_t *)0xe000e010u = 0;
 
+#if defined(FAMIDI_USB_MIDI)
+    // The working PoC uses GP16 and GP17 wired to the same /ROMSEL.
+    // No GPIO outside the existing GP0..17 bus is configured in MIDI mode.
+    const unsigned last_gpio = 17;
+    sio_hw->gpio_oe_clr = ADDRESS_MASK | DATA_MASK | CONTROL_MASK;
+#else
+    const unsigned last_gpio = 18;
     sio_hw->gpio_oe_clr = ADDRESS_MASK | DATA_MASK | CONTROL_MASK | INHIBIT_MASK;
+#endif
     sio_hw->gpio_out = 0;
     // Keep the normal two-flop input synchronizers enabled. Bypassing them on
     // an asynchronous CPU bus would remove latency but introduce metastability.
     syscfg_hw->proc_in_sync_bypass &= ~(ADDRESS_MASK | CONTROL_MASK);
-    for (unsigned gpio = 0; gpio <= 18; ++gpio) {
+    for (unsigned gpio = 0; gpio <= last_gpio; ++gpio) {
         // Direct IO_BANK0/PADS_BANK0 accesses, not gpio_init/set_dir/put/get.
         io_bank0_hw->io[gpio].ctrl = IO_BANK0_GPIO0_CTRL_FUNCSEL_VALUE_SIOB_PROC_0;
         // Writing the whole pad register clears ISO, OD, pulls and Schmitt.
@@ -62,6 +95,11 @@ int main(void) {
               (1u << PADS_BANK0_GPIO0_DRIVE_LSB)
             : PADS_BANK0_GPIO0_IE_BITS;
     }
+#if defined(FAMIDI_USB_MIDI)
+    multicore_launch_core1_with_stack(famidi_rom_core1, rom_stack, sizeof rom_stack);
+    while (!atomic_load_explicit(&rom_ready, memory_order_acquire)) tight_loop_contents();
+    famidi_usb_enter(usb_stack + sizeof usb_stack / sizeof usb_stack[0]);
+#else
     // Enable this only after all initialization. The external OR gate prevents
     // the NES data buffers from driving before readiness or outside ROM reads.
     sio_hw->gpio_oe_set = INHIBIT_MASK;
@@ -69,5 +107,6 @@ int main(void) {
     rom_poll_arm(rom256);
 #else
     rom_poll_c(rom256);
+#endif
 #endif
 }

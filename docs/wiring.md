@@ -1,5 +1,10 @@
 # 配線と電源
 
+IRQなしUSB MIDI版は実機PoCの配線を維持します：A0–A7=GP0–7、D0–D7=GP8–15、
+GP16/17は両方 `/ROMSEL`。GP18/19やNES `/IRQ`、追加ICは使いません。
+詳細は [USB MIDIの配線と確認手順](usb-midi.md) を参照してください。
+以下のGP18を含む3 IC案は元の固定音PoC向けの参考構成です。
+
 対象は **Mapper 0 の PRG-ROM 置換**です。CPU が ROM read するときだけ新しい回路が
 CPU D0–D7 を駆動します。元の PRG-ROM は取り外すか、そのチップの出力を確実に無効化してください。
 元の ROM と並列に有効化すると bus conflict になります。CHR-ROM、CIRAM/mirroring、
